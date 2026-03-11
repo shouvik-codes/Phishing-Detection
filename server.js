@@ -8,38 +8,61 @@ app.use(cors());
 app.use(express.json());
 
 /**
- * Advanced Phishing Detection Logic
+ * Phishing Detection Logic
  */
 const analyzeURL = (inputUrl) => {
     try {
         const urlObj = new URL(inputUrl);
         const hostname = urlObj.hostname.toLowerCase();
         const protocol = urlObj.protocol;
+        
+        // 1. Calculate URL length inside the function scope
+        // Legitimate URLs are typically < 54 characters.
+        const urlLength = inputUrl.length;
 
-        // 1. Check for IP-based URLs 
+        // 2. Check for IP-based URLs 
         if (validator.isIP(hostname)) return { isPhishing: true, reason: "IP-based URLs are highly suspicious." };
 
-        // 2. Check for Non-HTTPS 
+        // 3. Check for Non-HTTPS 
         if (protocol !== 'https:') return { isPhishing: true, reason: "Insecure protocol (HTTP) detected." };
 
-        // 3. Detect "Typosquatting" and Look-alike characters
-        // Flags zeros used as 'o', or '1' used as 'l'
+        // 4. URL Length and Subdomain Logic
+        // Attackers use long URLs to hide the real domain on mobile devices.
+        if (urlLength >= 75) {
+            return { 
+                isPhishing: true, 
+                reason: `Extreme URL length detected (${urlLength} characters). This is a common tactic to hide the real domain name.` 
+            };
+        } else if (urlLength >= 54) {
+            // Check for excessive subdomains if length is suspicious
+            const dotCount = (hostname.match(/\./g) || []).length;
+            if (dotCount > 2) {
+                return { 
+                    isPhishing: true, 
+                    reason: "Suspiciously long URL combined with multiple subdomains detected." 
+                };
+            }
+        }
+
+        // 5. Detect Tunneling Services (trycloudflare, ngrok, etc.)
+        const tunnelingServices = ['trycloudflare.com', 'loca.lt', 'ngrok-free.app'];
+        if (tunnelingServices.some(service => hostname.endsWith(service))) {
+            return { isPhishing: true, reason: "Temporary tunnel detected. These are frequently used to host hidden phishing sites." };
+        }
+
+        // 6. Detect "Typosquatting" and Look-alike characters
         const suspiciousChars = ['0', '1', '@', '!', '$'];
         if (suspiciousChars.some(char => hostname.includes(char))) {
             return { isPhishing: true, reason: "URL contains suspicious characters or symbols." };
         }
 
-        // 4. Check for excessive subdomains 
-        const dotCount = (hostname.match(/\./g) || []).length;
-        if (dotCount > 3) return { isPhishing: true, reason: "Too many subdomains detected." };
-
-        // 5. Deep Keyword Analysis 
+        // 7. Deep Keyword Analysis 
         const threatKeywords = ['login', 'verify', 'update', 'banking', 'secure-account', 'signin', 'wp-admin'];
         if (threatKeywords.some(key => hostname.includes(key) || urlObj.pathname.includes(key))) {
             return { isPhishing: true, reason: "URL contains sensitive keywords used in fraud." };
         }
 
-        // 6. Dangerous TLDs (Top Level Domains)
+        // 8. Dangerous TLDs (Top Level Domains)
         const riskyTLDs = ['.xyz', '.top', '.zip', '.icu', '.work', '.click'];
         if (riskyTLDs.some(tld => hostname.endsWith(tld))) {
             return { isPhishing: true, reason: "This site uses a high-risk domain extension." };
