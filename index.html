@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Detection Tool | ICSS</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
+</head>
+<body>
+<script src="script.js"></script>
+    <div class="top-bar">
+        <span><i class="fas fa-phone"></i> Phone: +91 xxxxxxxxxx | +91 xxxxxxxxxx </span>
+    </div>
+
+  <header>
+    <div class="logo-container">
+        <div class="logo-circle"></div>
+        <div class="logo-text">
+            <strong>INDIAN CYBER SECURITY SOLUTIONS</strong>
+            <small>CyberSec Ops Pvt. Ltd.</small>
+        </div>
+    </div>
+    
+    <nav class="nav-menu">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Courses</a></li>
+            <li><a href="#">Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <div class="menu-icon">
+        <i class="fas fa-bars"></i>
+    </div>
+</header>
+
+    <main class="hero">
+        <h1>Stop Cyber Threats Before They Strike.</h1>
+        <p class="subtitle">
+            Verify suspicious links instantly with our free, Machine Learning-powered 
+            phishing detection tool. Your first line of defense against cyber fraud.
+        </p>
+
+        <form id="verifyForm" class="search-box">
+            <input type="url" id="urlInput" placeholder="Paste the suspicious URL or link here (e.g., https://example.com)" required>
+            <button type="submit" id="verifyBtn">
+                <i class="fas fa-search"></i> Verify Link
+            </button>
+        </form>
+        
+        <!-- Result Display Area -->
+        <div id="resultMessage" class="result-box"></div>
+    </main>
+
+    <footer class="partners">
+        <p>TRUSTED BY & ASSOCIATED WITH</p>
+        <div class="partner-logos">
+            <span class="partner">NASSCOM</span>
+            <span class="partner">DSCI</span>
+        </div>
+    </footer>
+</body>
+</html>
